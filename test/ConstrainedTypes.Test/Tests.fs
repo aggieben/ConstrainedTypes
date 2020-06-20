@@ -3,9 +3,9 @@ module Tests
 open System
 open Xunit
 
-type NonEmptyString = ConstrainedTypes.ConstrainedString<"fun (s:string) -> not (System.String.IsNullOrWhiteSpace(s))">
+type BoundedString10 = ConstrainedTypes.BoundedString<10>
 
 [<Fact>]
 let ``ConstrainedString Constructor`` () =
-    NonEmptyString("b")
+    BoundedString10("test")
     Assert.True(true)

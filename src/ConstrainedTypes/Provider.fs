@@ -19,6 +19,8 @@ type ConstrainedStringProvider (config : TypeProviderConfig) as this =
 
     let provider = ProvidedTypeDefinition(thisAssembly, rootNs, "ConstrainedString", Some typeof<string>)
 
+    let boundedStringProvider = ProvidedTypeDefinition(thisAssembly, rootNs, "BoundedString", Some typeof<string>)
+
     let compile expression =
         let fsc = FSharpChecker.Create()
         let srcf = Path.ChangeExtension(Path.GetTempFileName(), ".fsx")
@@ -74,7 +76,27 @@ type ConstrainedStringProvider (config : TypeProviderConfig) as this =
             provided
         )
 
-        this.AddNamespace(rootNs, [provider])
+        boundedStringProvider.DefineStaticParameters([ProvidedStaticParameter("Length", typeof<int>)], fun name args ->
+            let length = args.[0] :?> int
+            let provided = ProvidedTypeDefinition(thisAssembly, rootNs, name, Some typeof<string>)
+
+            ProvidedConstructor(
+                [ProvidedParameter("value", typeof<string>)],
+                fun args ->
+                    <@@
+                        printfn "checking bound: %d" length
+                        if (length < String.length %%(args.[0])) then
+                            sprintf "provided value exceeded the bounds: '%s' > %d"
+                                %%(args.[0]) length
+                            |> invalidArg "value"
+                    @@>
+            )
+            |> provided.AddMember
+
+            provided
+        )
+
+        this.AddNamespace(rootNs, [provider; boundedStringProvider])
 
 [<TypeProviderAssembly>]
 do ()
