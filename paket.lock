@@ -6,8 +6,8 @@ NUGET
     NETStandard.Library.NETFramework (2.0.0-preview2-25405-01)
 GITHUB
   remote: fsprojects/FSharp.TypeProviders.SDK
-    src/ProvidedTypes.fs (b8727a47dd83d3e88aed8f2100f6712478c64632)
-    src/ProvidedTypes.fsi (b8727a47dd83d3e88aed8f2100f6712478c64632)
+    src/ProvidedTypes.fs (b45779c1571b54a2bc6bafa12690a8d9763150d1)
+    src/ProvidedTypes.fsi (b45779c1571b54a2bc6bafa12690a8d9763150d1)
 GROUP Test
 RESTRICTION: || (== net461) (== netcoreapp3.1)
 NUGET
