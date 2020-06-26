@@ -4,7 +4,7 @@ open System
 
 // Put any utilities here
 [<AutoOpen>]
-module internal Utilities =
+module Utilities =
 
     let ensureBoundedString length value =
         if length < String.length value then
