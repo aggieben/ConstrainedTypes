@@ -36,10 +36,7 @@ type BasicErasingProvider (config : TypeProviderConfig) as this =
                 [ProvidedParameter("value", typeof<string>)],
                 fun args ->
                     <@@
-                        if (length < String.length %%(args.[0])) then
-                            sprintf "provided value exceeds the bounds: '%s' > %d"
-                                %%(args.[0]) length
-                            |> invalidArg "value"
+                        ensureBoundedString length %%args.[0]
                     @@>
             )
             |> boundedStringType.AddMember

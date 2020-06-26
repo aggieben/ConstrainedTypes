@@ -6,7 +6,11 @@ open System
 [<AutoOpen>]
 module internal Utilities =
 
-    let x = 1
+    let ensureBoundedString length value =
+        if length < String.length value then
+            sprintf "provided value exceeds the bounds: '%s' > %d"
+                value length
+            |> invalidArg "value"
 
 // Put any runtime constructs here
 type DataSource(filename:string) =
