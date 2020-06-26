@@ -10,6 +10,13 @@ open FSharp.Quotations
 open Microsoft.FSharp.Quotations
 open FSharp.Compiler.SourceCodeServices
 
+module internal BoundedStringUtilities =
+    let ensureBoundedString length value =
+        if length < String.length value then
+            sprintf "provided value exceeded the bounds: '%s' > %d"
+                value length
+            |> invalidArg "value"
+
 [<TypeProvider>]
 type ConstrainedStringProvider (config : TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces (config, addDefaultProbingLocation=true)
@@ -17,65 +24,9 @@ type ConstrainedStringProvider (config : TypeProviderConfig) as this =
     let rootNs = "ConstrainedTypes"
     let thisAssembly = Assembly.GetExecutingAssembly()
 
-    let provider = ProvidedTypeDefinition(thisAssembly, rootNs, "ConstrainedString", Some typeof<string>)
-
     let boundedStringProvider = ProvidedTypeDefinition(thisAssembly, rootNs, "BoundedString", Some typeof<string>)
 
-    let compile expression =
-        let fsc = FSharpChecker.Create()
-        let srcf = Path.ChangeExtension(Path.GetTempFileName(), ".fsx")
-        let dllf = Path.ChangeExtension(srcf, ".dll")
-
-        let src =
-            sprintf
-                """
-                module ConstrainedStringExpression
-                let expression = %s
-                """
-                expression
-
-        File.WriteAllText(srcf, src)
-
-        let errors, exitCode, dynAssembly =
-            fsc.CompileToDynamicAssembly([|"-o"; dllf; "-a"; srcf|], execute=None)
-            |> Async.RunSynchronously
-
-        match dynAssembly with
-        | None ->
-            failwithf "failed to compile expression '%s': %s" expression errors.[0].Message
-        | Some assembly ->
-            let funcType =
-                assembly.DefinedTypes
-                |> Seq.head
-                |> (fun m ->
-                        m.DeclaredMethods
-                        |> Seq.head)
-
-            fun (s:string) -> funcType.Invoke(null, [| s |]) :?> bool
-
     do
-        provider.DefineStaticParameters([ProvidedStaticParameter("Expression", typeof<string>)], fun name args ->
-            let expression = args.[0] :?> string
-            let constraintFunc = compile expression
-            let provided = ProvidedTypeDefinition(thisAssembly, rootNs, name, Some typeof<string>)
-
-            printfn "creating type named: %s.%s" rootNs name
-
-            ProvidedConstructor(
-                [ProvidedParameter("value", typeof<string>)],
-                fun args ->
-                    <@@
-                        printfn "evaluating constraint '%s'" expression
-                        if not (constraintFunc %%(args.[0])) then
-                            sprintf "provided value did not satisfy the constraint '%s'" expression
-                            |> invalidArg "value"
-                    @@>
-            )
-            |> provided.AddMember
-
-            provided
-        )
-
         boundedStringProvider.DefineStaticParameters([ProvidedStaticParameter("Length", typeof<int>)], fun name args ->
             let length = args.[0] :?> int
             let provided = ProvidedTypeDefinition(thisAssembly, rootNs, name, Some typeof<string>)
@@ -84,11 +35,7 @@ type ConstrainedStringProvider (config : TypeProviderConfig) as this =
                 [ProvidedParameter("value", typeof<string>)],
                 fun args ->
                     <@@
-                        printfn "checking bound: %d" length
-                        if (length < String.length %%(args.[0])) then
-                            sprintf "provided value exceeded the bounds: '%s' > %d"
-                                %%(args.[0]) length
-                            |> invalidArg "value"
+                        BoundedStringUtilities.ensureBoundedString length %%args.[0]
                     @@>
             )
             |> provided.AddMember
@@ -96,7 +43,7 @@ type ConstrainedStringProvider (config : TypeProviderConfig) as this =
             provided
         )
 
-        this.AddNamespace(rootNs, [provider; boundedStringProvider])
+        this.AddNamespace(rootNs, [boundedStringProvider])
 
 [<TypeProviderAssembly>]
 do ()

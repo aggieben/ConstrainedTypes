@@ -7,5 +7,5 @@ type BoundedString10 = ConstrainedTypes.BoundedString<10>
 
 [<Fact>]
 let ``ConstrainedString Constructor`` () =
-    BoundedString10("test")
-    Assert.True(true)
+    let b10 = BoundedString10("test")
+    printfn "b10: %A" b10
