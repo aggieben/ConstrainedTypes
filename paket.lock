@@ -139,6 +139,8 @@ NUGET
       Microsoft.NETCore.Platforms (>= 1.1)
       Microsoft.NETCore.Targets (>= 1.1)
       System.Runtime (>= 4.3)
+    Unquote (5.0)
+      FSharp.Core (>= 4.6.2)
     xunit (2.4.1)
       xunit.analyzers (>= 0.10)
       xunit.assert (2.4.1)
