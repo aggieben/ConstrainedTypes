@@ -7,6 +7,7 @@ open Xunit
 type BoundedString10 = ConstrainedTypes.BoundedString<10>
 
 [<Theory>]
+[<Trait("ProvidedType", "BoundedString")>]
 [<InlineData("test", false)>]
 [<InlineData("this is a longer test", true)>]
 let ``BoundedString Constructor correctly validates`` value throws =
@@ -17,6 +18,13 @@ let ``BoundedString Constructor correctly validates`` value throws =
 
 
 [<Fact>]
+[<Trait("ProvidedType", "BoundedString")>]
 let ``BoundedString conversion to string`` () =
     let bs = BoundedString10("test")
     test <@ string bs = "test" @>
+
+[<Trait("ProvidedType", "BoundedString")>]
+[<Fact>]
+let ``BoundedString is a string`` () =
+    let bs = BoundedString10("test")
+    test <@ bs.GetType() = typeof<string> @>
