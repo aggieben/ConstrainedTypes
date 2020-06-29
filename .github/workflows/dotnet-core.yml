@@ -3,14 +3,17 @@ name: .NET Core
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'src/**'
+      - 'test/**'
   pull_request:
     branches: [ master ]
+      - 'src/**'
+      - 'test/**'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
