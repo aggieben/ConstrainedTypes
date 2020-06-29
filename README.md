@@ -34,3 +34,7 @@ open ConstrainedTypes
 // this type can be used wherever you might have previously used an int.
 type IntegersBetween0And100 = RangedInt<0,100>
 ```
+
+## Note about versions
+
+I plan to be consistent with SemVer, however any version under 1.0 may fudge the rules a bit (i.e., I may make a breaking change between 0.2 and 0.3).
