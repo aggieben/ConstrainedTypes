@@ -16,7 +16,7 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <PackageReleaseNotes>
       Added implementation of RangedInt
-    </PakageReleaseNotes>
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
