@@ -5,7 +5,7 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Benjamin Collins</Authors>
     <PackageDescription>
       ConstrainedTypes is a set of type providers for F# that aims to implement
@@ -15,10 +15,10 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <DevelopmentDependency>true</DevelopmentDependency>
     <PackageReleaseNotes>
-      Provides a simple BoundedString type.
+      Added implementation of RangedInt
     </PakageReleaseNotes>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi" />
     <Compile Include="..\..\paket-files\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fs" />
