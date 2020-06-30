@@ -31,22 +31,24 @@ type ConstrainedTypesProvider (config : TypeProviderConfig) as this =
     let rangedIntegerProvider = ProvidedTypeDefinition(asm, ns, "RangedInt", Some typeof<int>)
 
     do
-        boundedStringProvider.DefineStaticParameters([ProvidedStaticParameter("Length", typeof<int>)], fun name args ->
-            let length = args.[0] :?> int
-            let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<string>)
+        boundedStringProvider.DefineStaticParameters(
+            [ProvidedStaticParameter("Length", typeof<int>)],
+            fun name args ->
+                let length = args.[0] :?> int
+                let provided = ProvidedTypeDefinition(asm, ns, name, Some typeof<string>)
 
-            ProvidedConstructor(
-                [ProvidedParameter("value", typeof<string>)],
-                fun args ->
-                    <@@
-                        let value = %%args.[0]
-                        ensureBoundedString length value
-                    @@>
+                ProvidedConstructor(
+                    [ProvidedParameter("value", typeof<string>)],
+                    fun args ->
+                        <@@
+                            let value = %%args.[0]
+                            ensureBoundedString length value
+                        @@>
+                )
+                |> provided.AddMember
+
+                provided
             )
-            |> provided.AddMember
-
-            provided
-        )
 
         rangedIntegerProvider.DefineStaticParameters(
             [ProvidedStaticParameter("Min", typeof<int>); ProvidedStaticParameter("Max", typeof<int>)],
